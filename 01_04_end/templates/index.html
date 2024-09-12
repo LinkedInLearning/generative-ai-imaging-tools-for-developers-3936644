@@ -2,40 +2,215 @@
 <html lang="en">
 
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Image Generator</title>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="An image generator with a responsive photo gallery layout." />
+  <title>Image Generator &ndash; Photo Gallery</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/purecss@3.0.0/build/pure-min.css"
+    integrity="sha384-X38yfunGUhNzHpBaEBsWLO+A0HDYOQi8ufWDkZ0k9e0eXz/tH3II7uKZ9msv++Ls" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/purecss@3.0.0/build/grids-responsive-min.css">
+  <style>
+    body {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 0 20px;
+      font-family: Arial, sans-serif;
+    }
+
+    .header {
+      padding: 1em 0;
+      border-bottom: 1px solid #eee;
+      margin-bottom: 2em;
+    }
+
+    .photo-box-wrapper {
+      padding: 10px;
+    }
+
+    .photo-box {
+      border: 1px solid #ddd;
+      position: relative;
+      overflow: hidden;
+      padding-bottom: 100%;
+      /* Square aspect ratio */
+      background-color: #f0f0f0;
+    }
+
+    .photo-box img {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .photo-box-caption {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      padding: 0.8em;
+      text-align: center;
+      background: rgba(240, 240, 240, 0.8);
+      color: #333;
+      font-size: 0.9em;
+    }
+
+    .form-box {
+      background: #f7f7f7;
+      padding: 2em;
+      margin-bottom: 2em;
+    }
+
+    #result {
+      margin-top: 2em;
+    }
+
+    #result img {
+      max-width: 100%;
+      height: auto;
+    }
+
+    .footer {
+      border-top: 1px solid #eee;
+      padding: 1em 0;
+      text-align: center;
+      font-size: 0.8em;
+      color: #999;
+      margin-top: 2em;
+    }
+
+    .spinner {
+      border: 4px solid #f3f3f3;
+      border-top: 4px solid #3498db;
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+      animation: spin 1s linear infinite;
+      margin: 20px auto;
+      display: none;
+    }
+
+    @keyframes spin {
+      0% {
+        transform: rotate(0deg);
+      }
+
+      100% {
+        transform: rotate(360deg);
+      }
+    }
+  </style>
 </head>
 
 <body>
-  <h1>Image Generator</h1>
-  <form id="promptForm">
-    <label for="prompt">Enter a prompt:</label>
-    <input type="text" id="prompt" name="prompt" required>
-    <button type="submit">Generate Image</button>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/purecss@3.0.0/build/pure-min.css"
-      integrity="sha384-X38yfunGUhNzHpBaEBsWLO+A0HDYOQi8ufWDkZ0k9e0eXz/tH3II7uKZ9msv++Ls" crossorigin="anonymous">
-  </form>
-  <div id="result"></div>
+  <div>
+    <div class="header">
+      <div class="pure-menu pure-menu-horizontal">
+        <a class="pure-menu-heading" href="">Image Generator</a>
+      </div>
+    </div>
+
+    <div class="pure-g">
+      <div class="pure-u-1 form-box">
+        <h2>Generate an Image</h2>
+        <form id="promptForm" class="pure-form pure-form-stacked">
+          <label for="prompt">Enter a prompt:</label>
+          <input type="text" id="prompt" name="prompt" required class="pure-input-1">
+          <button type="submit" class="pure-button pure-button-primary">Generate Image</button>
+        </form>
+        <div id="generateSpinner" class="spinner"></div>
+      </div>
+
+      <div id="result" class="pure-u-1"></div>
+
+      <div class="pure-u-1">
+        <h2>Generated Images Gallery</h2>
+        <div id="gallerySpinner" class="spinner"></div>
+      </div>
+
+      <div id="imageGallery" class="pure-g">
+        <!-- Generated images will be added here -->
+      </div>
+    </div>
+
+    <div class="footer">
+      Created with love by the Image Generator Team.
+    </div>
+  </div>
+
   <script>
+    // Load initial images
+    window.addEventListener('load', async function () {
+      await loadImages();
+    });
+
+    async function loadImages() {
+      showSpinner('gallerySpinner');
+      try {
+        const response = await fetch('/api/list/');
+        const images = await response.json();
+        const galleryDiv = document.getElementById('imageGallery');
+        galleryDiv.innerHTML = ''; // Clear existing content
+        images.forEach(image => addToGallery(image.url, image.prompt));
+      } catch (error) {
+        console.error('Error loading images:', error);
+      } finally {
+        hideSpinner('gallerySpinner');
+      }
+    }
+
     document.getElementById('promptForm').addEventListener('submit', async function (event) {
       event.preventDefault();
       const prompt = document.getElementById('prompt').value;
-      const response = await fetch('/api/', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ prompt: prompt })
-      });
-      const data = await response.json();
-      const resultDiv = document.getElementById('result');
-      if (data.image_url) {
-        resultDiv.innerHTML = `<h2>Generated Image:</h2><img src="${data.image_url}" alt="Generated Image">`;
-      } else {
-        resultDiv.innerHTML = `<p>Error generating image.</p>`;
+      showSpinner('generateSpinner');
+      try {
+        const response = await fetch('/api/', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ prompt: prompt })
+        });
+        const data = await response.json();
+        const resultDiv = document.getElementById('result');
+        if (data.url) {
+          resultDiv.innerHTML = `<h2>Generated Image:</h2><img src="${data.url}" alt="Generated Image">`;
+          addToGallery(data.url, prompt);
+        } else {
+          resultDiv.innerHTML = `<p>Error generating image.</p>`;
+        }
+      } catch (error) {
+        console.error('Error generating image:', error);
+        document.getElementById('result').innerHTML = `<p>Error generating image.</p>`;
+      } finally {
+        hideSpinner('generateSpinner');
       }
     });
+
+    function addToGallery(imageUrl, caption) {
+      const galleryDiv = document.getElementById('imageGallery');
+      const photoBox = document.createElement('div');
+      photoBox.className = 'pure-u-1 pure-u-md-1-2 pure-u-lg-1-3 photo-box-wrapper';
+      photoBox.innerHTML = `
+                <div class="photo-box">
+                    <img src="${imageUrl}" alt="${caption}">
+                    <aside class="photo-box-caption">
+                        <span>${caption}</span>
+                    </aside>
+                </div>
+            `;
+      galleryDiv.prepend(photoBox);
+    }
+
+    function showSpinner(id) {
+      document.getElementById(id).style.display = 'block';
+    }
+
+    function hideSpinner(id) {
+      document.getElementById(id).style.display = 'none';
+    }
   </script>
 </body>
 
