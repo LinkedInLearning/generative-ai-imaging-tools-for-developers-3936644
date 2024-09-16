@@ -2,41 +2,56 @@
 <html lang="en">
 
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="description" content="An image generator with a responsive photo gallery layout." />
+  <!-- Required meta tags -->
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Sticker Generator &ndash; Photo Gallery</title>
 
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css">
-  <!-- local style from flask -->
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <!-- Custom CSS -->
   <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 
 <body>
-  <main class="container">
-    <h2>Generate an Sticker</h2>
-    <form id="promptForm">
-      <label for="prompt">Enter a prompt:</label>
-      <input type="text" id="prompt" name="prompt" required>
-      <button type="submit">Generate Image</button>
+  <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <div class="container-fluid">
+      <a class="navbar-brand" href="#">Sticker Generator</a>
+    </div>
+  </nav>
+
+  <main class="container my-4">
+    <h2 class="text-center mb-4">Generate a Sticker</h2>
+    <form id="promptForm" class="row g-3">
+      <div class="col-md-10">
+        <input type="text" class="form-control" id="prompt" name="prompt" placeholder="Enter a prompt" required>
+      </div>
+      <div class="col-md-2 d-grid">
+        <button type="submit" class="btn btn-primary">Generate Image</button>
+      </div>
     </form>
-    <div id="generateSpinner" class="spinner"></div>
+    <div id="generateSpinner" class="d-flex justify-content-center my-4 invisible">
+      <div class="spinner-grow text-primary" role="status"></div>
+    </div>
     <div id="result"></div>
-    <div class="pure-u-1">
-      <h2>Generated Images Gallery</h2>
-      <div id="gallerySpinner" class="spinner"></div>
+
+    <h2 class="text-center my-4">Generated Images Gallery</h2>
+    <div id="gallerySpinner" class="d-flex justify-content-center my-4 invisible">
+      <div class="spinner-grow text-primary" role="status"></div>
     </div>
 
-    <div id="imageGallery">
+    <div id="imageGallery" class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-4">
       <!-- Generated images will be added here -->
-    </div>
-    </div>
-
-    <div class="footer">
-      Created with love by the Image Generator Team.
     </div>
   </main>
 
+  <footer class="bg-dark text-white text-center py-3">
+    Created with love by the Image Generator Team.
+  </footer>
+
+  <!-- Bootstrap JS Bundle -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <!-- Custom Script -->
   <script src="{{ url_for('static', filename='script.js') }}"></script>
 </body>
 

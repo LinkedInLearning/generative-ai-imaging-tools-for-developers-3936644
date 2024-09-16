@@ -112,7 +112,7 @@ def api():
 @app.get("/api/list/")
 def get_image():
     return jsonify([
-        {"prompt": image.split("-id")[1], "url": f"/static/images/{image}"}
+        {"prompt": image.split("-id")[0], "url": f"/static/images/{image}"}
         for image in os.listdir("static/images")
     ])
     

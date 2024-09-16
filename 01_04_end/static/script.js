@@ -1,17 +1,18 @@
 // Load initial images
-window.addEventListener('load', async function (e) {
+window.addEventListener('load', async function () {
   await loadImages();
 });
+
 const galleryDiv = document.getElementById('imageGallery');
+
 async function loadImages() {
   showSpinner('gallerySpinner');
   try {
     const response = await fetch('/api/list/');
     const images = await response.json();
     galleryDiv.innerHTML = ''; // Clear existing content
-    const imageBoxes = images.map(image => createPhotoBox(image.url, image.prompt))
-
-    galleryDiv.append(...imageBoxes);
+    const imageCards = images.map(image => createImageCard(image.url, image.prompt));
+    galleryDiv.append(...imageCards);
   } catch (error) {
     console.error('Error loading images:', error);
   } finally {
@@ -34,32 +35,61 @@ document.getElementById('promptForm').addEventListener('submit', async function 
     const data = await response.json();
     const resultDiv = document.getElementById('result');
     if (data.url) {
-      const imageBox = createPhotoBox(data.url, prompt);
-      galleryDiv.prepend(imageBox);
+      const imageCard = createImageCard(data.url, prompt);
+      galleryDiv.prepend(imageCard); // Add the new image at the top
+      resultDiv.innerHTML = `<div class="alert alert-success" role="alert">Image generated successfully!</div>`;
     } else {
-      resultDiv.innerHTML = `<p>Error generating image.</p>`;
+      resultDiv.innerHTML = `<div class="alert alert-danger" role="alert">Error generating image.</div>`;
     }
   } catch (error) {
     console.error('Error generating image:', error);
-    document.getElementById('result').innerHTML = `<p>Error generating image.</p>`;
+    document.getElementById('result').innerHTML = `<div class="alert alert-danger" role="alert">Error generating image.</div>`;
   } finally {
     hideSpinner('generateSpinner');
   }
 });
 
-function createPhotoBox(imageUrl, caption) {
-  const imageEl = document.createElement('img');
-  imageEl.src = imageUrl;
-  const photoBox = document.createElement('div');
-  photoBox.className = 'pure-u-1 pure-u-md-1-2 pure-u-lg-1-3';
-  photoBox.appendChild(imageEl);
-  return photoBox
+function createImageCard(imageUrl, caption) {
+  const colDiv = document.createElement('div');
+  colDiv.className = 'col';
+
+  const cardDiv = document.createElement('div');
+  cardDiv.className = 'card h-100';
+
+  const imgEl = document.createElement('img');
+  imgEl.src = imageUrl;
+  imgEl.className = 'card-img-top';
+  imgEl.alt = caption;
+
+  const cardBody = document.createElement('div');
+  cardBody.className = 'card-body d-flex flex-column';
+
+  const cardText = document.createElement('p');
+  cardText.className = 'card-text flex-grow-1';
+  cardText.textContent = caption;
+
+  const downloadButton = document.createElement('a');
+  downloadButton.className = 'btn btn-primary mt-2';
+  downloadButton.href = imageUrl;
+  downloadButton.download = '';
+  downloadButton.textContent = 'Download Image';
+
+  cardBody.appendChild(cardText);
+  cardBody.appendChild(downloadButton);
+
+  cardDiv.appendChild(imgEl);
+  cardDiv.appendChild(cardBody);
+  colDiv.appendChild(cardDiv);
+
+  return colDiv;
 }
 
 function showSpinner(id) {
-  document.getElementById(id).style.display = 'block';
+  document.getElementById(id).classList.remove('invisible');
+  document.getElementById(id).classList.add('visible');
 }
 
 function hideSpinner(id) {
-  document.getElementById(id).style.display = 'none';
+  document.getElementById(id).classList.remove('visible');
+  document.getElementById(id).classList.add('invisible');
 }
