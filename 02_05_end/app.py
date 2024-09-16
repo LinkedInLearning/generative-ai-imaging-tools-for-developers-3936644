@@ -21,7 +21,10 @@ def moderate_prompt(client, prompt):
     moderation = client.moderations.create(input=prompt)
     flagged = moderation.results[0].flagged
     if flagged:
-        return "Your prompt has been flagged for moderation. Please try another prompt.", flagged
+        return (
+            "Your prompt has been flagged for moderation. Please try another prompt.",
+            flagged,
+        )
     return prompt, flagged
 
 
@@ -33,43 +36,27 @@ def enhance_prompt(client, prompt):
     response = client.chat.completions.create(
         model="gpt-4o-mini",
         messages=[
-        {
-          "role": "system",
-          "content": [
             {
-              "type": "text",
-              "text": "You take image-generation prompts and turn them into sticker styled image-generation prompts for software developers."
-            }
-          ]
-        },
-        {
-          "role": "user",
-          "content": [
+                "role": "system",
+                "content": [
+                    {
+                        "type": "text",
+                        "text": "You take image-generation prompts and turn them into fun, dynamic visuals to market a tech companies meetup.",
+                    }
+                ],
+            },
+            {"role": "user", "content": [{"type": "text", "text": "a cat"}]},
             {
-              "type": "text",
-              "text": "a cat"
-            }
-          ]
-        },
-        {
-          "role": "assistant",
-          "content": [
-            {
-              "type": "text",
-              "text": "Sticker style illustration of a cute, cartoonish cat with oversized eyes programming on a laptop, a playful expression, and a colorful, whimsical background filled with yarn balls and fish toys. Include fun, bold outlines and a vibrant color palette!"
-            }
-          ]
-        },
-        {
-           "role": "user",
-          "content": [
-            {
-              "type": "text",
-              "text": prompt,
-            }
-          ] 
-        }
-      ],
+                "role": "assistant",
+                "content": [
+                    {
+                        "type": "text",
+                        "text": "A vibrant, eye-catching illustration of a cool, tech-savvy cat wearing headphones and working on a futuristic laptop, surrounded by dynamic tech-related visuals like glowing code, digital clouds, and circuits. The cat has a confident, excited expression, and the overall composition radiates energy and innovation. The background can feature elements of modern tech culture, with playful, futuristic elements to capture the exciting, forward-thinking atmosphere of the tech companies meetup.",
+                    }
+                ],
+            },
+            {"role": "user", "content": [{"type": "text", "text": prompt}]},
+        ],
         temperature=1,
         max_tokens=2048,
         top_p=1,
@@ -102,7 +89,7 @@ def api():
         model="dall-e-3",
         prompt=proccessed_prompt,
         size="1024x1024",
-        quality="standard", 
+        quality="standard",
         n=1,
     )
     url = load_image(response.data[0].url, prompt)
@@ -111,12 +98,14 @@ def api():
 
 @app.get("/api/list/")
 def get_image():
-    return jsonify([
-        {"prompt": image.split("-id")[0], "url": f"/static/images/{image}"}
-        for image in os.listdir("static/images")
-        if image.endswith(".png")
-    ])
-    
+    return jsonify(
+        [
+            {"prompt": image.split("-id")[0], "url": f"/static/images/{image}"}
+            for image in os.listdir("static/images") 
+            if image.endswith(".png")
+        ]
+    )
+
 
 def load_image(url, prompt):
     """
@@ -126,9 +115,14 @@ def load_image(url, prompt):
     image = Image.open(response.raw)
     uuid_string = str(uuid.uuid4())[:3]
     file_path = f"static/images/{prompt}-id{uuid_string}.png"
-    resized = image.resize((512, 512,))
+    resized = image.resize(
+        (
+            512,
+            512,
+        )
+    )
     image.save(file_path)
     return f"/{file_path}"
-    
-app.run(debug=True, port=5000)
 
+
+app.run(debug=True)

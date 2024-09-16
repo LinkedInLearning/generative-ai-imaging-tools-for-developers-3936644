@@ -1,0 +1,15 @@
+.card-img-top {
+  object-fit: cover;
+  height: 200px;
+}
+
+footer {
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+}
+
+.spinner-border {
+  width: 3rem;
+  height: 3rem;
+}
