@@ -130,5 +130,5 @@ def load_image(url, prompt):
     image.save(file_path)
     return f"/{file_path}"
     
-app.run(debug=True, port=5000)
+app.run(debug=True, port=8000)
 
