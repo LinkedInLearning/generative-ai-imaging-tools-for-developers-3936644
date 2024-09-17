@@ -13,71 +13,9 @@ client = OpenAI()
 
 image_queue = deque()
 
-
-def moderate_prompt(client, prompt):
-    """
-    Moderate the prompt
-    """
-    moderation = client.moderations.create(input=prompt)
-    flagged = moderation.results[0].flagged
-    if flagged:
-        return "Your prompt has been flagged for moderation. Please try another prompt.", flagged
-    return prompt, flagged
-
-
-def enhance_prompt(client, prompt):
-    """
-    Enhance the prompt by adding a few more tokens
-    """
-
-    response = client.chat.completions.create(
-        model="gpt-4o-mini",
-        messages=[
-        {
-          "role": "system",
-          "content": [
-            {
-              "type": "text",
-              "text": "You take image-generation prompts and turn them into sticker styled image-generation prompts for software developers."
-            }
-          ]
-        },
-        {
-          "role": "user",
-          "content": [
-            {
-              "type": "text",
-              "text": "a cat"
-            }
-          ]
-        },
-        {
-          "role": "assistant",
-          "content": [
-            {
-              "type": "text",
-              "text": "Sticker style illustration of a cute, cartoonish cat with oversized eyes programming on a laptop, a playful expression, and a colorful, whimsical background filled with yarn balls and fish toys. Include fun, bold outlines and a vibrant color palette!"
-            }
-          ]
-        },
-        {
-           "role": "user",
-          "content": [
-            {
-              "type": "text",
-              "text": prompt,
-            }
-          ] 
-        }
-      ],
-        temperature=1,
-        max_tokens=2048,
-        top_p=1,
-        frequency_penalty=0,
-        presence_penalty=0,
-        response_format={"type": "text"},
-    )
-    return response.choices[0].message.content
+def enhance_prompt(prompt):
+    style = "cartoon style"
+    return f"{prompt} {style}"
 
 
 @app.get("/")
@@ -92,10 +30,6 @@ def api():
     """
     data = request.json
     prompt = data["prompt"]
-    moderated_prompt, flagged = moderate_prompt(client, prompt)
-
-    if flagged:
-        return jsonify({"error": moderated_prompt})
 
     proccessed_prompt = enhance_prompt(client, prompt)
     response = client.images.generate(
@@ -130,5 +64,4 @@ def load_image(url, prompt):
     image.save(file_path)
     return f"/{file_path}"
     
-app.run(debug=True, port=8000)
-
+app.run(debug=True, port=5000)
