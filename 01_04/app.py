@@ -14,8 +14,9 @@ client = OpenAI()
 image_queue = deque()
 
 def enhance_prompt(prompt):
-    style = "cartoon style"
-    return f"{prompt} {style}"
+    "TODO: Challenge code bellow"
+    
+    return 
 
 
 @app.get("/")
