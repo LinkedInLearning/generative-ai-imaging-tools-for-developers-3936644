@@ -14,8 +14,9 @@ client = OpenAI()
 image_queue = deque()
 
 def enhance_prompt(prompt):
-    style = "cartoon style"
-    return f"{prompt} {style}"
+    "TODO: Challenge code bellow"
+    style_template = "A vibrant laptop sticker of {} for develpers"
+    return style_template.format(prompt) 
 
 
 @app.get("/")
@@ -31,7 +32,7 @@ def api():
     data = request.json
     prompt = data["prompt"]
 
-    proccessed_prompt = enhance_prompt(client, prompt)
+    proccessed_prompt = enhance_prompt(prompt)
     response = client.images.generate(
         model="dall-e-3",
         prompt=proccessed_prompt,
