@@ -15,8 +15,8 @@ image_queue = deque()
 
 def enhance_prompt(prompt):
     "TODO: Challenge code bellow"
-    style_template = "A vibrant laptop sticker of {} for develpers"
-    return style_template.format(prompt) 
+    style_template = "A vibrant sticker of {} for develpers"
+    return style_template.format(prompt)
 
 
 @app.get("/")
