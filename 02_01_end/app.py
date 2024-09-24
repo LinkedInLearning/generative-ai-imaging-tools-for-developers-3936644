@@ -13,7 +13,7 @@ client = OpenAI()
 
 image_queue = deque()
 
-def enhance_prompt(prompt):
+def enhance_prompt(client, prompt):
     "TODO: Challenge code bellow"
     response = client.chat.completions.create(
     model="gpt-4o-mini",
@@ -22,8 +22,8 @@ def enhance_prompt(prompt):
         "role": "system",
         "content": [
             {
-            "type": "text",
-            "text": "You take image-generation prompts and turn them into sticker styled image-generation prompts."
+            "text": "You take image-generation prompts and turn them into sticker styled image-generation prompts.",
+            "type": "text"
             }
         ]
         },
@@ -62,8 +62,9 @@ def enhance_prompt(prompt):
     presence_penalty=0,
     response_format={
         "type": "text"
-    })
-    return response.choices[0].message
+    }
+    )
+    return response.choices[0].message.content
 
 
 @app.get("/")
@@ -79,7 +80,10 @@ def api():
     data = request.json
     prompt = data["prompt"]
 
-    proccessed_prompt = enhance_prompt(prompt)
+    proccessed_prompt = enhance_prompt(client, prompt)
+    print("====================================")
+    print(proccessed_prompt)
+    print("====================================")
     response = client.images.generate(
         model="dall-e-3",
         prompt=proccessed_prompt,
