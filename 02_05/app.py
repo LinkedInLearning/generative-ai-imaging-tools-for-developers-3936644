@@ -29,8 +29,8 @@ def enhance_prompt(client, prompt):
         "role": "system",
         "content": [
             {
-            "text": "You take image-generation prompts and turn them into sticker styled image-generation prompts.",
-            "type": "text"
+            "type": "text",
+            "text": "You take image generation prompts and enhance so that a simple yet appealing meet-up invitation graphic is generated. The output should be a refined prompt."
             }
         ]
         },
@@ -39,7 +39,7 @@ def enhance_prompt(client, prompt):
         "content": [
             {
             "type": "text",
-            "text": "A cat"
+            "text": "AI and Cloud Compute"
             }
         ]
         },
@@ -48,7 +48,7 @@ def enhance_prompt(client, prompt):
         "content": [
             {
             "type": "text",
-            "text": "A cute, cartoon-style cat with big eyes, wearing a colorful collar, surrounded by playful yarn balls and bright daisies, in a vibrant sticker design."
+            "text": "A minimalist and visually appealing meet-up invitation graphic. The design should incorporate modern aesthetics and elements related to AI and cloud computing. Use a clean layout with an emphasis on simplicity. Include relevant icons such as a cloud, neural network, or AI chip. The color scheme should be a blend of tech-inspired hues like blues and silvers. The text should highlight \"AI and Cloud Compute Meet-Up,\" the date, time, and location, ensuring readability and elegance."
             }
         ]
         },
