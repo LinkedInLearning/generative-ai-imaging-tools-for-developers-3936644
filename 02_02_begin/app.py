@@ -14,7 +14,7 @@ client = OpenAI()
 image_queue = deque()
 
 def enhance_prompt(client, prompt):
-    "TODO: Challenge code bellow"
+    "TODO: Challenge code below"
     response = client.chat.completions.create(
     model="gpt-4o-mini",
     messages=[

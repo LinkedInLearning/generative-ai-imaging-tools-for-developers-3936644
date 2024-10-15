@@ -27,4 +27,5 @@ def generate_image(prompt):
     
 if __name__ == "__main__":
     generate_image(USER_PROMPT)
-    print("Image generated!")
+    print(USER_PROMPT)
+

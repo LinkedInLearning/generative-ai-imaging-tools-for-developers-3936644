@@ -14,7 +14,7 @@ client = OpenAI()
 image_queue = deque()
 
 def enhance_prompt(prompt):
-    "TODO: Challenge code bellow"
+    "TODO: Challenge code below"
     
     return 
 

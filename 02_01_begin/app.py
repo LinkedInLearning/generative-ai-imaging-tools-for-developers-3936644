@@ -14,8 +14,8 @@ client = OpenAI()
 image_queue = deque()
 
 def enhance_prompt(prompt):
-    "TODO: Challenge code bellow"
-    style_template = "A vibrant sticker of {} for develpers"
+    "TODO: Challenge code below"
+    style_template = "A vibrant sticker of {} for developers"
     return style_template.format(prompt)
 
 
