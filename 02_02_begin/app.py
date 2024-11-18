@@ -80,13 +80,13 @@ def api():
     data = request.json
     prompt = data["prompt"]
 
-    proccessed_prompt = enhance_prompt(client, prompt)
+    processed_prompt = enhance_prompt(client, prompt)
     print("====================================")
-    print(proccessed_prompt)
+    print(processed_prompt)
     print("====================================")
     response = client.images.generate(
         model="dall-e-3",
-        prompt=proccessed_prompt,
+        prompt=processed_prompt,
         size="1024x1024",
         quality="standard", 
         n=1,
